@@ -1,8 +1,9 @@
 import xml.etree.ElementTree as ET
 import csv
 
-gpx_file = "Data/GPX/Giro d'Italia 2025 - Stage 21_ Roma - Roma.gpx"
-csv_file = 'Data/CSV/trasa1.csv'
+
+gpx_file = "Data/GPX/nazwa-pliku-do-konwersji"
+csv_file = 'Data/CSV/nazwa-pliku-docelowego'
 
 tree = ET.parse(gpx_file)
 root = tree.getroot()
