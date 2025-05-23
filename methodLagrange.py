@@ -40,8 +40,8 @@ def interpolationLagrangePlot(filename, minY, maxY):
     fig, axes = plt.subplots(2, 2)
     fig.suptitle("Interpolacja Lagrange'a dla różnych liczby węzłów", fontsize=16)
 
-    colors = ['r', 'g', 'm', 'c']
     nodes_counts = [5, 10, 15, 20]
+    colors = ['r', 'g', 'm', 'c']
     
     for idx, (nodesN, ax) in enumerate(zip(nodes_counts, axes.flatten())):
         # Wybieramy węzły interpolacji
