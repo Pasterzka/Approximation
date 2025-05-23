@@ -80,13 +80,13 @@ def interpolationLagrangePlot(filename):
     # Normalizacja dziedziny
     distanceNorm, minDistance, maxDistance = normalize(distances)
 
-    plt.plot(distances, elevations, 'b-', label='Dane oryginalne', alpha=0.7, linewidth=2)
+    fig, axes = plt.subplots(2, 2)
+    fig.suptitle("Interpolacja Lagrange'a dla różnych liczby węzłów", fontsize=16)
 
     colors = ['r', 'g', 'm', 'c']
-    line_styles = ['-', '-', '-', '-']
     nodes_counts = [5, 10, 15, 20]
     
-    for idx, nodesN in enumerate(nodes_counts):
+    for idx, (nodesN, ax) in enumerate(zip(nodes_counts, axes.flatten())):
         # Wybieramy węzły interpolacji
         n = len(distanceNorm)
         step = n // nodesN
@@ -104,29 +104,33 @@ def interpolationLagrangePlot(filename):
         interpolationX = denormalize(interpolationnormX, minDistance, maxDistance)
         
         # Rysowanie
-        plt.plot(interpolationX, interpolationY, 
+        ax.plot(distances, elevations, 'b-', label='Dane oryginalne', alpha=0.7, linewidth=1.5)
+        ax.plot(interpolationX, interpolationY, 
                 color=colors[idx], 
-                linestyle=line_styles[idx],
+                linestyle='-',
                 label=f'Interpolacja ({nodesN} węzłów)')
-        plt.plot([distances[i] for i in indices], nodesY, 
-                'o', 
-                color=colors[idx],
-                markersize=5,
-                alpha=0.7)
+        
+
+        for i, (x, y) in enumerate(zip([distances[i] for i in indices], nodesY)):
+            ax.plot(x, y, 'o', color=colors[idx], markersize=6)
+            ax.text(x, y, f'({x:.0f}, {y:.1f})', 
+                   fontsize=8, 
+                   ha='center', 
+                   va='bottom' if i % 2 else 'top',
+                   bbox=dict(facecolor='white', alpha=0.7, edgecolor='none'))
+            
+        ax.set_xlabel('Odległość [m]', fontsize=10)
+        ax.set_ylabel('Wysokość [m n.p.m.]', fontsize=10)
+        ax.set_title(f'{nodesN} węzłów interpolacji', fontsize=12)
+        ax.legend(fontsize=9, loc='upper right')
+        ax.grid(True, alpha=0.3)
+        ax.set_ylim(-50, 250)
         
     # Konfiguracja wykresu
-    plt.xlabel('Odległość [m]', fontsize=12)
-    plt.ylabel('Wysokość [m n.p.m.]', fontsize=12)
-    plt.title("Porównanie interpolacji Lagrange'a dla różnych liczby węzłów", fontsize=14)
-    plt.legend(fontsize=10, loc='upper right')
-    plt.grid(True, alpha=0.3)
-    plt.ylim(-50, 250)
-    
-    # Zwiększenie czytelności osi
-    plt.tick_params(axis='both', which='major', labelsize=10)
-    
     plt.tight_layout()
+    plt.subplots_adjust(top=0.92)
     plt.show()
+
 
 if __name__ == "__main__":
    filename = "Data/CSV/trasa2-2.csv"
