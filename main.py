@@ -1,9 +1,10 @@
-from matplotlib import pyplot as plt
+import matplotlib.pyplot as plt
 import numpy as np
 import methodLagrange as mL
 import methodSpline as mS
 import normalization as nor
 import loadData 
+import errors
 
 def compare_all_methods(filename, minY, maxY):
     distances, elevations = loadData.loadData(filename)
@@ -89,9 +90,44 @@ def compare_all_methods(filename, minY, maxY):
     plt.show()
 
 if __name__ == "__main__":
+    filename = "Data/CSV/trasa1-21.csv"
+    #mL.interpolationLagrangePlot(filename, -20, 120)
+    #mL.interpolationLagrangeChebyshevPlot(filename, -20, 120)
+    #mL.interpolationLagrangeComparePlot(filename, -20, 120)
+    #compare_all_methods(filename, -20, 120)
+    #compare_all_methods(filename, 0, 1000)
+    #mS.interpolationSplinePlots(filename, -20, 120)
+    errors.analyze_errors(filename)
+
     filename = "Data/CSV/trasa2-2.csv"
     #mL.interpolationLagrangePlot(filename, -50, 250)
     #mL.interpolationLagrangeChebyshevPlot(filename, -50, 250)
     #mL.interpolationLagrangeComparePlot(filename, -50, 250)
-    compare_all_methods(filename, -50, 250)
-    mS.interpolationSplinePlots(filename, -50, 250)
+    #compare_all_methods(filename, -50, 250)
+    #compare_all_methods(filename, 0, 1000)
+    #mS.interpolationSplinePlots(filename, -50, 250)
+    errors.analyze_errors(filename)
+
+    filename = "Data/CSV/trasa3-7.csv"
+    #mL.interpolationLagrangePlot(filename, 200, 1800)
+    #mL.interpolationLagrangeChebyshevPlot(filename, 200, 1800)
+    #mL.interpolationLagrangeComparePlot(filename, 200, 1800)
+    #compare_all_methods(filename, 200, 1800)
+    #mS.interpolationSplinePlots(filename, 200, 1800)
+    errors.analyze_errors(filename)
+
+    filename = "Data/CSV/trasa4-19.csv"
+    #mL.interpolationLagrangePlot(filename, 200, 1800)
+    #mL.interpolationLagrangeChebyshevPlot(filename, 200, 1800)
+    #mL.interpolationLagrangeComparePlot(filename, 200, 1800)
+    #compare_all_methods(filename, 200, 1800)
+    #mS.interpolationSplinePlots(filename, 200, 1800)
+    errors.analyze_errors(filename)
+
+    filename = "Data/CSV/trasa5-20.csv"
+    #mL.interpolationLagrangePlot(filename, 200, 1800)
+    #mL.interpolationLagrangeChebyshevPlot(filename, 200, 1800)
+    #mL.interpolationLagrangeComparePlot(filename, 200, 1800)
+    #compare_all_methods(filename, 200, 2500)
+    #mS.interpolationSplinePlots(filename, 200, 1800)
+    errors.analyze_errors(filename)
