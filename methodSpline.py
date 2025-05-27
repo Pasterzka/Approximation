@@ -52,7 +52,8 @@ def interpolationSplinePlots(filename, minY, maxY):
     axes = axes.flatten() 
     fig.suptitle("Interpolacja funkcjami sklejanymi (spline) – różna liczba węzłów", fontsize=16)
 
-    nodes_counts = [5, 10, 15, 20]
+    #nodes_counts = [5, 10, 15, 20]
+    nodes_counts = [10, 25, 50, 100]
     colors = ['r', 'g', 'm', 'c']
 
     for idx, (nodesN, ax) in enumerate(zip(nodes_counts, axes)):
@@ -69,8 +70,8 @@ def interpolationSplinePlots(filename, minY, maxY):
         interpY = evaluateSpline(a, b, c, d, x_base, interpX)
 
         # Rysowanie danych i interpolacji
-        ax.plot(distances, elevations, 'b--', label='Dane oryginalne', alpha=0.5)
-        ax.plot(interpX, interpY, color=colors[idx], label=f'Spline ({nodesN} węzłów)')
+        ax.plot(distances, elevations, 'b', label='Dane oryginalne', alpha=0.5)
+        ax.plot(interpX, interpY, '--', color=colors[idx], label=f'Spline ({nodesN} węzłów)')
         ax.plot(nodesX, nodesY, 'o', color=colors[idx], label='Węzły')
 
         # Etykiety i stylizacja

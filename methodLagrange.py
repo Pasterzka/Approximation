@@ -41,6 +41,7 @@ def interpolationLagrangePlot(filename, minY, maxY):
     fig.suptitle("Interpolacja Lagrange'a dla różnych liczby węzłów", fontsize=16)
 
     nodes_counts = [5, 10, 15, 20]
+    #nodes_counts = [10, 25, 50, 100]
     colors = ['r', 'g', 'm', 'c']
     
     for idx, (nodesN, ax) in enumerate(zip(nodes_counts, axes.flatten())):
@@ -68,13 +69,13 @@ def interpolationLagrangePlot(filename, minY, maxY):
                 label=f'Interpolacja ({nodesN} węzłów)')
         
 
-        #for i, (x, y) in enumerate(zip([distances[i] for i in indices], nodesY)):
-        #    ax.plot(x, y, 'o', color=colors[idx], markersize=6)
-        #    ax.text(x, y, f'({x:.0f}, {y:.1f})', 
-        #           fontsize=8, 
-        #           ha='center', 
-        #           va='bottom' if i % 2 else 'top',
-        #           bbox=dict(facecolor='white', alpha=0.7, edgecolor='none'))
+        for i, (x, y) in enumerate(zip([distances[i] for i in indices], nodesY)):
+            ax.plot(x, y, 'o', color=colors[idx], markersize=6)
+            #ax.text(x, y, f'({x:.0f}, {y:.1f})', 
+            #       fontsize=4, 
+            #       ha='center', 
+            #       va='bottom' if i % 2 else 'top',
+            #       bbox=dict(facecolor='white', alpha=0.7, edgecolor='none'))
             
         ax.set_xlabel('Odległość [m]', fontsize=10)
         ax.set_ylabel('Wysokość [m n.p.m.]', fontsize=10)
@@ -97,7 +98,8 @@ def interpolationLagrangeComparePlot(filename, minY, maxY):
     fig, axes = plt.subplots(2, 2)
     fig.suptitle("Porównanie interpolacji Lagrange'a dla różnych rozmieszczeń węzłów", fontsize=16)
 
-    nodes_counts = [5, 10, 15, 20]
+    #nodes_counts = [5, 10, 15, 20]
+    nodes_counts = [10, 25, 50, 100]
     colors = ['r', 'g', 'm', 'c']
     node_types = ['Równomierne', 'Chebyshev']
     line_styles = ['-', '--']
@@ -171,7 +173,8 @@ def interpolationLagrangeChebyshevPlot(filename, minY, maxY):
     fig.suptitle("Interpolacja Lagrange'a dla różnych liczby węzłów", fontsize=16)
 
     colors = ['r', 'g', 'm', 'c']
-    nodes_counts = [5, 10, 15, 20]
+    #nodes_counts = [5, 10, 15, 20]
+    nodes_counts = [10, 25, 50, 100]
     
     for idx, (nodesN, ax) in enumerate(zip(nodes_counts, axes.flatten())):
         # Wybieramy węzły interpolacji
@@ -200,9 +203,10 @@ def interpolationLagrangeChebyshevPlot(filename, minY, maxY):
                 linestyle='-',
                 label=f'Interpolacja ({nodesN} węzłów)')
         
-
-        #for i, (x, y) in enumerate(zip([distances[i] for i in indices], nodesY)):
-        #    ax.plot(x, y, 'o', color=colors[idx], markersize=6)
+        
+        nodesX_denorm = nor.denormalize(nodesX, minDistance, maxDistance)
+        for x, y in zip(nodesX_denorm, nodesY):
+            ax.plot(x, y, 'o', color=colors[idx], markersize=6)
         #    ax.text(x, y, f'({x:.0f}, {y:.1f})', 
         #           fontsize=8, 
         #           ha='center', 

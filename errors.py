@@ -14,13 +14,13 @@ def analyze_errors(filename):
     distances, elevations = loadData.loadData(filename)
     distanceNorm, minDistance, maxDistance = nor.normalize(distances)
 
-    node_counts = [5, 10, 15, 20]
+    node_counts = [5, 10, 15, 20, 25, 50, 100]
     methods = ['lagrange_uniform', 'lagrange_chebyshev', 'spline']
     errors_mse = {method: [] for method in methods}
     errors_max = {method: [] for method in methods}
 
     x_dense = np.linspace(0, 1, 500)
-    y_true_dense = np.interp(x_dense, distanceNorm, elevations)  # wartości referencyjne
+    y_true_dense = np.interp(x_dense, distanceNorm, elevations)
 
     for nodesN in node_counts:
         # Równomierne węzły
@@ -54,8 +54,8 @@ def analyze_errors(filename):
         errors_max['lagrange_chebyshev'].append(max_absolute_error(y_true_dense, y_lagrange_cheb))
         errors_max['spline'].append(max_absolute_error(y_true_dense, y_spline))
 
-    # Wypisanie do konsoli
+    print("\n--- Podsumowanie błędów interpolacji ---")
     for method in methods:
         print(f"\nMetoda: {method}")
-        for n, mse, mae in zip(node_counts, errors_mse[method], errors_max[method]):
-            print(f"Węzły: {n} | MSE: {mse:.4f} | MaxError: {mae:.4f}")
+        for n, mse, max_err in zip(node_counts, errors_mse[method], errors_max[method]):
+            print(f"Węzły: {n:<4} | MSE: {mse:.4f} | MaxError: {max_err:.4f}")
