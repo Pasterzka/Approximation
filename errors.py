@@ -4,58 +4,58 @@ import methodSpline as mS
 import normalization as nor
 import loadData
 
-def mean_squared_error(y_true, y_pred):
-    return np.mean((np.array(y_true) - np.array(y_pred)) ** 2)
+def meanSquaredError(trueY, predY):
+    return np.mean((np.array(trueY) - np.array(predY)) ** 2)
 
-def max_absolute_error(y_true, y_pred):
-    return np.max(np.abs(np.array(y_true) - np.array(y_pred)))
+def maxAbsoluteError(trueY, predY):
+    return np.max(np.abs(np.array(trueY) - np.array(predY)))
 
-def analyze_errors(filename):
+def analyzeErrors(filename):
     distances, elevations = loadData.loadData(filename)
-    distanceNorm, minDistance, maxDistance = nor.normalize(distances)
+    distanceNorm, minDistance   , maxDistance = nor.normalize(distances)
 
-    node_counts = [5, 10, 15, 20, 25, 50, 100]
+    nodeCounts = [5, 10, 15, 20, 25, 50, 100]
     methods = ['lagrange_uniform', 'lagrange_chebyshev', 'spline']
-    errors_mse = {method: [] for method in methods}
-    errors_max = {method: [] for method in methods}
+    mseErrors = {method: [] for method in methods}
+    maxErrors = {method: [] for method in methods}
 
-    x_dense = np.linspace(0, 1, 500)
-    y_true_dense = np.interp(x_dense, distanceNorm, elevations)
+    denseX = np.linspace(0, 1, 500)
+    denseTrueY = np.interp(denseX, distanceNorm, elevations)
 
-    for nodesN in node_counts:
+    for nodesN in nodeCounts:
         # Równomierne węzły
         step = len(distanceNorm) // nodesN
         indices = range(0, len(distanceNorm), step)
-        nodesX_uniform = [distanceNorm[i] for i in indices]
-        nodesY_uniform = [elevations[i] for i in indices]
+        uniformNodesX = [distanceNorm[i] for i in indices]
+        uniformNodesY = [elevations[i] for i in indices]
 
         # Chebyshev
-        cheb_nodes = mL.nodesChebyshevGet(nodesN, 0, 1)
-        nodesX_cheb, nodesY_cheb = [], []
-        for node in cheb_nodes:
+        chebNodes = mL.nodesChebyshevGet(nodesN, 0, 1)
+        chebNodesX, chebNodesY = [], []
+        for node in chebNodes:
             idx = np.argmin(np.abs(np.array(distanceNorm) - node))
-            nodesX_cheb.append(distanceNorm[idx])
-            nodesY_cheb.append(elevations[idx])
+            chebNodesX.append(distanceNorm[idx])
+            chebNodesY.append(elevations[idx])
 
         # Interpolacje
-        y_lagrange_uniform = mL.interpolationLagrangeVectorized(nodesX_uniform, nodesY_uniform, x_dense)
-        y_lagrange_cheb = mL.interpolationLagrangeVectorized(nodesX_cheb, nodesY_cheb, x_dense)
+        lagrangeUniformY = mL.interpolationLagrangeVectorized(uniformNodesX, uniformNodesY, denseX)
+        lagrangeChebY = mL.interpolationLagrangeVectorized(chebNodesX, chebNodesY, denseX)
 
         # Spline
-        a, b, c, d, x_base = mS.naturalCubicSplineCoefficients(nodesX_uniform, nodesY_uniform)
-        y_spline = mS.evaluateSpline(a, b, c, d, x_base, x_dense)
+        a, b, c, d, x_base = mS.naturalCubicSplineCoefficients(uniformNodesX, uniformNodesY)
+        splineY = mS.evaluateSpline(a, b, c, d, x_base, denseX)
 
         # Obliczanie błędów
-        errors_mse['lagrange_uniform'].append(mean_squared_error(y_true_dense, y_lagrange_uniform))
-        errors_mse['lagrange_chebyshev'].append(mean_squared_error(y_true_dense, y_lagrange_cheb))
-        errors_mse['spline'].append(mean_squared_error(y_true_dense, y_spline))
+        mseErrors['lagrange_uniform'].append(meanSquaredError(denseTrueY, lagrangeUniformY))
+        mseErrors['lagrange_chebyshev'].append(meanSquaredError(denseTrueY, lagrangeChebY))
+        mseErrors['spline'].append(meanSquaredError(denseTrueY, splineY))
 
-        errors_max['lagrange_uniform'].append(max_absolute_error(y_true_dense, y_lagrange_uniform))
-        errors_max['lagrange_chebyshev'].append(max_absolute_error(y_true_dense, y_lagrange_cheb))
-        errors_max['spline'].append(max_absolute_error(y_true_dense, y_spline))
+        maxErrors['lagrange_uniform'].append(maxAbsoluteError(denseTrueY, lagrangeUniformY))
+        maxErrors['lagrange_chebyshev'].append(maxAbsoluteError(denseTrueY, lagrangeChebY))
+        maxErrors['spline'].append(maxAbsoluteError(denseTrueY, splineY))
 
     print("\n--- Podsumowanie błędów interpolacji ---")
     for method in methods:
         print(f"\nMetoda: {method}")
-        for n, mse, max_err in zip(node_counts, errors_mse[method], errors_max[method]):
+        for n, mse, max_err in zip(nodeCounts, mseErrors[method], maxErrors[method]):
             print(f"Węzły: {n:<4} | MSE: {mse:.4f} | MaxError: {max_err:.4f}")

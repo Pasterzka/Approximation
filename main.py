@@ -89,6 +89,63 @@ def compare_all_methods(filename, minY, maxY):
     plt.subplots_adjust(top=0.92, right=0.85)
     plt.show()
 
+
+def plot(filename, minY, maxY, nodesN):
+    distances, elevations = loadData.loadData(filename)
+    distanceNorm, minDistance, maxDistance = nor.normalize(distances)
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    fig.suptitle(f"Porównanie metod interpolacji ({nodesN} węzłów)", fontsize=16)
+
+    # Równomierne węzły
+    n = len(distanceNorm)
+    step = n // nodesN
+    indices = range(0, n, step)
+    nodesX_uniform = [distanceNorm[i] for i in indices]
+    nodesY_uniform = [elevations[i] for i in indices]
+
+    # Węzły Chebysheva
+    cheb_nodes = mL.nodesChebyshevGet(nodesN, 0, 1)
+    nodesX_cheb = []
+    nodesY_cheb = []
+    for node in cheb_nodes:
+        idx_closest = np.argmin(np.abs(np.array(distanceNorm) - node))
+        nodesX_cheb.append(distanceNorm[idx_closest])
+        nodesY_cheb.append(elevations[idx_closest])
+
+    # Punkty do interpolacji
+    x_interp = np.linspace(0, 1, 500)
+
+    # Interpolacje
+    y_lagrange_uniform = mL.interpolationLagrangeVectorized(nodesX_uniform, nodesY_uniform, x_interp)
+    y_lagrange_cheb = mL.interpolationLagrangeVectorized(nodesX_cheb, nodesY_cheb, x_interp)
+    a, b, c, d, x_base = mS.naturalCubicSplineCoefficients(nodesX_uniform, nodesY_uniform)
+    y_spline = mS.evaluateSpline(a, b, c, d, x_base, x_interp)
+
+    # Denormalizacja
+    x_interp_denorm = nor.denormalize(x_interp, minDistance, maxDistance)
+    nodesX_uniform_denorm = nor.denormalize(nodesX_uniform, minDistance, maxDistance)
+    nodesX_cheb_denorm = nor.denormalize(nodesX_cheb, minDistance, maxDistance)
+
+    # Wykres
+    ax.plot(distances, elevations, 'b-', label='Dane oryginalne', alpha=0.5)
+    ax.plot(x_interp_denorm, y_lagrange_uniform, 'r-', label='Lagrange (równomierne)')
+    ax.plot(x_interp_denorm, y_lagrange_cheb, 'g--', label='Lagrange (Chebyshev)')
+    ax.plot(x_interp_denorm, y_spline, 'm-.', label='Spline kubiczny')
+
+    # Węzły
+    ax.plot(nodesX_uniform_denorm, nodesY_uniform, 'ro', label='Węzły równomierne', alpha=0.6)
+    ax.plot(nodesX_cheb_denorm, nodesY_cheb, 'gx', label='Węzły Chebysheva', alpha=0.6)
+
+    ax.set_xlabel('Odległość [m]', fontsize=10)
+    ax.set_ylabel('Wysokość [m n.p.m.]', fontsize=10)
+    ax.set_ylim(minY, maxY)
+    ax.legend(fontsize=9)
+    ax.grid(True, alpha=0.3)
+
+    plt.tight_layout()
+    plt.show()
+
 if __name__ == "__main__":
     filename = "Data/CSV/trasa1-21.csv"
     #mL.interpolationLagrangePlot(filename, -20, 120)
@@ -97,7 +154,8 @@ if __name__ == "__main__":
     #compare_all_methods(filename, -20, 120)
     #mS.interpolationSplinePlots(filename, -20, 120)
     #compare_all_methods(filename, 0, 1000)
-    #errors.analyze_errors(filename)
+    #errors.analyzeErrors(filename)
+    plot(filename, -20,120,85)
 
     filename = "Data/CSV/trasa2-2.csv"
     #mL.interpolationLagrangePlot(filename, -50, 250)
@@ -106,7 +164,9 @@ if __name__ == "__main__":
     #mS.interpolationSplinePlots(filename, -50, 250)
     #compare_all_methods(filename, -50, 250)
     #compare_all_methods(filename, 0, 1000)
-    #errors.analyze_errors(filename)
+    #errors.analyzeErrors(filename)
+    plot(filename, -50,250,85)
+
 
     filename = "Data/CSV/trasa3-7.csv"
     #mL.interpolationLagrangePlot(filename, 200, 1800)
@@ -114,7 +174,9 @@ if __name__ == "__main__":
     #mL.interpolationLagrangeComparePlot(filename, 200, 1800)
     #mS.interpolationSplinePlots(filename, 200, 1800)
     #compare_all_methods(filename, 200, 1800)
-    #errors.analyze_errors(filename)
+    #errors.analyzeErrors(filename)
+    plot(filename, 200, 1800, 85)
+
 
     filename = "Data/CSV/trasa4-19.csv"
     #mL.interpolationLagrangePlot(filename, 200, 1800)
@@ -122,12 +184,15 @@ if __name__ == "__main__":
     #mL.interpolationLagrangeComparePlot(filename, 200, 1800)
     #mS.interpolationSplinePlots(filename, 200, 1800)
     #compare_all_methods(filename, 200, 1800)
-    #errors.analyze_errors(filename)
+    #errors.analyzeErrors(filename)
+    plot(filename, 200, 1800, 85)
+
 
     filename = "Data/CSV/trasa5-20.csv"
-    #mL.interpolationLagrangePlot(filename, 200, 3000)
-    #mL.interpolationLagrangeChebyshevPlot(filename, 200, 3000)
-    #mL.interpolationLagrangeComparePlot(filename, 200, 3000)
+    mL.interpolationLagrangePlot(filename, 200, 3000)
+    mL.interpolationLagrangeChebyshevPlot(filename, 200, 3000)
+    mL.interpolationLagrangeComparePlot(filename, 200, 3000)
     mS.interpolationSplinePlots(filename, 200, 3000)
-    #compare_all_methods(filename, 200, 3000)
-    errors.analyze_errors(filename)
+    compare_all_methods(filename, 200, 3000)
+    errors.analyzeErrors(filename)
+    plot(filename, 200, 3000, 85)

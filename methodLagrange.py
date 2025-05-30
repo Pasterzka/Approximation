@@ -40,11 +40,11 @@ def interpolationLagrangePlot(filename, minY, maxY):
     fig, axes = plt.subplots(2, 2)
     fig.suptitle("Interpolacja Lagrange'a dla różnych liczby węzłów", fontsize=16)
 
-    nodes_counts = [5, 10, 15, 20]
-    #nodes_counts = [10, 25, 50, 100]
+    nodesCount = [5, 10, 15, 20]
+    #nodesCount = [10, 25, 50, 100]
     colors = ['r', 'g', 'm', 'c']
     
-    for idx, (nodesN, ax) in enumerate(zip(nodes_counts, axes.flatten())):
+    for idx, (nodesN, ax) in enumerate(zip(nodesCount, axes.flatten())):
         # Wybieramy węzły interpolacji
         n = len(distanceNorm)
         step = n // nodesN
@@ -98,13 +98,13 @@ def interpolationLagrangeComparePlot(filename, minY, maxY):
     fig, axes = plt.subplots(2, 2)
     fig.suptitle("Porównanie interpolacji Lagrange'a dla różnych rozmieszczeń węzłów", fontsize=16)
 
-    #nodes_counts = [5, 10, 15, 20]
-    nodes_counts = [10, 25, 50, 100]
+    #nodesCount = [5, 10, 15, 20]
+    nodesCount = [10, 25, 50, 100]
     colors = ['r', 'g', 'm', 'c']
     node_types = ['Równomierne', 'Chebyshev']
     line_styles = ['-', '--']
 
-    for idx, (nodesN, ax) in enumerate(zip(nodes_counts, axes.flatten())):
+    for idx, (nodesN, ax) in enumerate(zip(nodesCount, axes.flatten())):
         # Rysowanie oryginalnych danych
         ax.plot(distances, elevations, 'b-', label='Dane oryginalne', alpha=0.7, linewidth=1.5)
         
@@ -134,7 +134,7 @@ def interpolationLagrangeComparePlot(filename, minY, maxY):
             
             # Denormalizacja
             interpolationX = nor.denormalize(interpolationnormX, minDistance, maxDistance)
-            nodesX_denorm = nor.denormalize(nodesX, minDistance, maxDistance)
+            nodesXDenorm = nor.denormalize(nodesX, minDistance, maxDistance)
             
             # Rysowanie interpolacji
             ax.plot(interpolationX, interpolationY, 
@@ -144,7 +144,7 @@ def interpolationLagrangeComparePlot(filename, minY, maxY):
             
             # Zaznaczenie węzłów
             marker = 'o' if node_type == 'Równomierne' else 's'
-            ax.plot(nodesX_denorm, nodesY, 
+            ax.plot(nodesXDenorm, nodesY, 
                     marker, 
                     color=colors[idx],
                     markersize=6,
@@ -173,10 +173,10 @@ def interpolationLagrangeChebyshevPlot(filename, minY, maxY):
     fig.suptitle("Interpolacja Lagrange'a dla różnych liczby węzłów", fontsize=16)
 
     colors = ['r', 'g', 'm', 'c']
-    #nodes_counts = [5, 10, 15, 20]
-    nodes_counts = [10, 25, 50, 100]
+    #nodesCount = [5, 10, 15, 20]
+    nodesCount = [10, 25, 50, 100]
     
-    for idx, (nodesN, ax) in enumerate(zip(nodes_counts, axes.flatten())):
+    for idx, (nodesN, ax) in enumerate(zip(nodesCount, axes.flatten())):
         # Wybieramy węzły interpolacji
         # Generujemy węzły Chebysheva
         cheb_nodes = nodesChebyshevGet(nodesN, 0, 1)
@@ -204,8 +204,8 @@ def interpolationLagrangeChebyshevPlot(filename, minY, maxY):
                 label=f'Interpolacja ({nodesN} węzłów)')
         
         
-        nodesX_denorm = nor.denormalize(nodesX, minDistance, maxDistance)
-        for x, y in zip(nodesX_denorm, nodesY):
+        nodesXDenorm = nor.denormalize(nodesX, minDistance, maxDistance)
+        for x, y in zip(nodesXDenorm, nodesY):
             ax.plot(x, y, 'o', color=colors[idx], markersize=6)
         #    ax.text(x, y, f'({x:.0f}, {y:.1f})', 
         #           fontsize=8, 
